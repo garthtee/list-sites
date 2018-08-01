@@ -16,19 +16,18 @@ namespace GarthToland.ListSites
             var settings = LoadSettings();
             IContainer container = null;
 
-            if (settings != null)
-            {
-                container = InversionOfControl.BuildContainer(settings);
+            if (settings == null)
                 return;
-            }
+
+            container = InversionOfControl.BuildContainer(settings);
 
             using (var scope = container.BeginLifetimeScope())
             {
                 scope.Resolve<IListSitesService>().GenerateSiteList();
             }
-#if DEBUG
+//#if DEBUG
             Console.ReadLine();
-#endif
+//#endif
         }
 
         private static Settings LoadSettings()
