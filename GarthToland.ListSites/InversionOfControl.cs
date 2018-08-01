@@ -16,8 +16,6 @@ namespace GarthToland.ListSites
                 .Where(HasInterfaceWithMatchingName)
                 .AsImplementedInterfaces();
 
-            builder.RegisterType<MessageService>().As<IMessageService>();
-
             if (settings != null)
                 builder.RegisterInstance(settings).As<ISettings>();
 

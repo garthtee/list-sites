@@ -68,14 +68,14 @@ namespace GarthToland.ListSites.Services
                             )
                         ),
                         new XElement("div",
-                        new XAttribute("class", "row"),
+                            new XAttribute("class", "row"),
                             new XElement("div",
                                 new XAttribute("class", "col"),
                                 new XElement("div",
-                                        new XAttribute("class", "list-group"),
-                                        directories
-                                    )
+                                    new XAttribute("class", "list-group"),
+                                    directories
                                 )
+                            )
                         )
                     )
                 )
@@ -112,20 +112,20 @@ namespace GarthToland.ListSites.Services
                     if (!shortDirectoryName.Contains("."))
                         continue;
 
-                    var button = new XElement("a",
+                    var listItem = new XElement("a",
                         new XAttribute("class", "list-group-item list-group-item-action fade show"),
                         new XAttribute("href", $"http://localhost/{shortDirectoryName}"),
                         new XAttribute("target", "_blank"),
                         shortDirectoryName
                     );
 
-                    directories.Add(button);
+                    directories.Add(listItem);
 
                     _messageService.DisplayMessage($"Found {shortDirectoryName}", ConsoleColor.Green);
                 }
 
                 if (directories.Count == 0)
-                    _messageService.DisplayMessage("Site folders must contain a '.', e.g. 'example.com'.", ConsoleColor.Red);
+                    _messageService.DisplayMessage("Site folder names must contain a '.', e.g. 'example.com'.", ConsoleColor.Red);
             }
 
             return directories;

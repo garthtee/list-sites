@@ -13,7 +13,14 @@ namespace GarthToland.ListSites
 
         private static void Main(string[] args)
         {
-            var container = InversionOfControl.BuildContainer(LoadSettings());
+            var settings = LoadSettings();
+            IContainer container = null;
+
+            if (settings != null)
+            {
+                container = InversionOfControl.BuildContainer(settings);
+                return;
+            }
 
             using (var scope = container.BeginLifetimeScope())
             {
@@ -26,45 +33,24 @@ namespace GarthToland.ListSites
 
         private static Settings LoadSettings()
         {
-            string settingsJson = null;
-
-            if (!ConstructSettingsFile())
-            {
-                return null;
-            }
-
-            settingsJson = File.ReadAllText(SETTINGS_FILE);
-
-            return JsonConvert.DeserializeObject<Settings>(settingsJson);
-        }
-
-        private static bool ConstructSettingsFile()
-        {
-            ISettings settings = null;
-            int attempts = 1;
-
             Console.WriteLine($"Enter path of htdocs [{_localhostPath}]:");
             var input = Console.ReadLine();
 
             if (!string.IsNullOrWhiteSpace(input))
                 _localhostPath = input;
 
-            while (settings == null)
-            {
-                if (attempts > 4)
-                    return false;
-                else if (attempts > 1)
-                    Console.WriteLine($"Attempt {attempts} at building the settings file...");
-
-                settings = new Settings { LocalHostPath = _localhostPath };
-                attempts++;
-            }
+            var settings = new Settings { LocalHostPath = _localhostPath };
 
             File.WriteAllText(SETTINGS_FILE, JsonConvert.SerializeObject(settings, Formatting.Indented));
 
+            if (!File.Exists(SETTINGS_FILE))
+                return null;
+
             Console.WriteLine($"You can find the settings file at {Path.GetFullPath(SETTINGS_FILE)}.");
 
-            return true;
+            var settingsJson = File.ReadAllText(SETTINGS_FILE);
+
+            return JsonConvert.DeserializeObject<Settings>(settingsJson);
         }
     }
 }
