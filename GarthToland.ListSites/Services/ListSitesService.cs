@@ -37,7 +37,7 @@ namespace GarthToland.ListSites.Services
                 w.Flush();
             }
 
-            System.Diagnostics.Process.Start("http://localhost/");
+            System.Diagnostics.Process.Start(_settings.LocalhostUrl);
         }
 
 
