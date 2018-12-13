@@ -64,7 +64,7 @@ namespace GarthToland.ListSites.Services
                             "Local sites",
                             new XElement("small",
                             new XAttribute("class", "text-muted"),
-                                " - by Garth Toland"
+                                " - Edit me however you'd like!"
                             )
                         ),
                         new XElement("div",
@@ -100,7 +100,7 @@ namespace GarthToland.ListSites.Services
             }
             catch (DirectoryNotFoundException)
             {
-                _messageService.DisplayMessage("Invalid path. (Try C:\\xampp\\htdocs\\)", ConsoleColor.Red);
+                _messageService.DisplayMessage("Invalid path (Try C:\\xampp\\htdocs\\)", ConsoleColor.Red);
             }
 
             if (directoryIterator != null)
@@ -114,7 +114,7 @@ namespace GarthToland.ListSites.Services
 
                     var listItem = new XElement("a",
                         new XAttribute("class", "list-group-item list-group-item-action fade show"),
-                        new XAttribute("href", $"http://localhost/{shortDirectoryName}"),
+                        new XAttribute("href", $"{_settings.LocalhostUrl}{shortDirectoryName}"),
                         new XAttribute("target", "_blank"),
                         shortDirectoryName
                     );

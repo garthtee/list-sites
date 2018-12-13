@@ -8,10 +8,6 @@ namespace GarthToland.ListSites
 {
     class Program
     {
-        private static readonly string SETTINGS_FILE = "settings.json";
-        private static string _localhostPath = "C:/xampp/htdocs/";
-        private static string _localhostUrl = "http://localhost/";
-
         private static void Main(string[] args)
         {
             var settings = LoadSettings();
@@ -32,41 +28,60 @@ namespace GarthToland.ListSites
 
         private static Settings LoadSettings()
         {
+            var settingsJson = File.ReadAllText(Constants.SETTINGS_FILE);
+            var settings = JsonConvert.DeserializeObject<Settings>(settingsJson);
+
             // Get path
-            Console.WriteLine($"Enter path of htdocs [{_localhostPath}]:");
+            Console.WriteLine($"Enter webserver root path [{settings.LocalHostPath}]:");
 
             var input = Console.ReadLine();
 
-            while (string.IsNullOrWhiteSpace(input) || !Directory.Exists(input))
+            while (!Directory.Exists(input))
             {
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine($"Localhost path remaining default");
+                    break;
+                }
+
                 Console.WriteLine($"Incorrect path, try again");
                 input = Console.ReadLine();
             }
 
-            _localhostPath = input;
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                settings.LocalHostPath = input;
+            }
 
             // Get URL
-            Console.WriteLine($"Enter localhost URL [{_localhostUrl}]:");
+            Console.WriteLine($"Enter localhost URL and port [{settings.LocalhostUrl}]:");
             input = Console.ReadLine();
 
-            while (string.IsNullOrWhiteSpace(input) || !input.StartsWith("http") || !Uri.IsWellFormedUriString(input, UriKind.Absolute))
+            while (!input.StartsWith("http") || !Uri.IsWellFormedUriString(input, UriKind.Absolute))
             {
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine($"Localhost URL remaining default");
+                    break;
+                }
+
                 Console.WriteLine($"Incorrect URL, try again");
                 input = Console.ReadLine();
             }
 
-            _localhostUrl = input;
+            if (!string.IsNullOrWhiteSpace(input))
+            {
+                settings.LocalhostUrl = input;
+            }
 
-            var settings = new Settings { LocalHostPath = _localhostPath, LocalhostUrl = _localhostUrl };
+            File.WriteAllText(Constants.SETTINGS_FILE, JsonConvert.SerializeObject(settings, Formatting.Indented));
 
-            File.WriteAllText(SETTINGS_FILE, JsonConvert.SerializeObject(settings, Formatting.Indented));
-
-            if (!File.Exists(SETTINGS_FILE))
+            if (!File.Exists(Constants.SETTINGS_FILE))
                 return null;
 
-            Console.WriteLine($"You can find the settings file at {Path.GetFullPath(SETTINGS_FILE)}.");
+            Console.WriteLine($"You can find the settings file at {Path.GetFullPath(Constants.SETTINGS_FILE)}.");
 
-            var settingsJson = File.ReadAllText(SETTINGS_FILE);
+            settingsJson = File.ReadAllText(Constants.SETTINGS_FILE);
 
             return JsonConvert.DeserializeObject<Settings>(settingsJson);
         }
